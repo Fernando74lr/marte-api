@@ -22,11 +22,12 @@ const updateUserInTableField = (user, table, timer, res) => {
 	userRef
 		.update({
 			inTable: timer === 0 ? false : true,
-			timer: moment().add(timer, 'minutes').unix(),
+			timer: moment().add(parseInt(timer), 'minutes').unix(),
 		})
 		.then(() => {
 			res.json({
 				ok: true,
+				timer,
 				msg: `Mesa ${table.tableNum} ${table.tableColor} en uso para: ${user.name}`,
 				user,
 			});
