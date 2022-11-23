@@ -21,7 +21,7 @@ const updateUserInTableField = (user, table, timer, res) => {
 	const userRef = db.collection('users').doc(user.userId);
 	userRef
 		.update({
-			inTable: true,
+			inTable: timer === 0 ? false : true,
 			timer: moment().add(timer, 'minutes').unix(),
 		})
 		.then(() => {
@@ -51,10 +51,11 @@ router.get('/check-card-id', (req, res) => {
 				const user = snapshot.data();
 				const tableColor = tableId.split('_')[0];
 				const tableNum = tableId.split('_')[1];
+
 				updateUserInTableField(
 					user,
 					{ tableColor, tableNum },
-					timer,
+					user.inTable ? 0 : timer,
 					res
 				);
 			} else {
