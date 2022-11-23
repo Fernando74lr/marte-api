@@ -74,7 +74,7 @@ router.get('/check-card-id', (req, res) => {
 					updateUserInTableField(
 						user,
 						{ tableColor, tableNum },
-						timer,
+						user.inTable ? 0 : timer,
 						res
 					);
 				}
