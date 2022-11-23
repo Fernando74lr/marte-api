@@ -17,12 +17,12 @@ let db = admin.firestore();
 // 	moment(admin.firestore.Timestamp.now()).add(10, 'minutes').unix()
 // .format('hh:mm:ss')
 // );
-const updateUserInTableField = (user, table, res) => {
+const updateUserInTableField = (user, table, timer, res) => {
 	const userRef = db.collection('users').doc(user.userId);
 	userRef
 		.update({
 			inTable: true,
-			timer: moment().add(15, 'minutes').unix(),
+			timer: moment().add(timer, 'minutes').unix(),
 		})
 		.then(() => {
 			res.json({
@@ -41,7 +41,7 @@ const updateUserInTableField = (user, table, res) => {
 };
 
 router.get('/check-card-id', (req, res) => {
-	const { cardId, tableId } = req.query;
+	const { cardId, tableId, timer = 15 } = req.query;
 	db.collection('users')
 		.where('cardId', '==', cardId)
 		.get()
@@ -51,7 +51,12 @@ router.get('/check-card-id', (req, res) => {
 				const user = snapshot.data();
 				const tableColor = tableId.split('_')[0];
 				const tableNum = tableId.split('_')[1];
-				updateUserInTableField(user, { tableColor, tableNum }, res);
+				updateUserInTableField(
+					user,
+					{ tableColor, tableNum },
+					timer,
+					res
+				);
 			} else {
 				res.json({
 					ok: false,
@@ -61,6 +66,25 @@ router.get('/check-card-id', (req, res) => {
 		})
 		.catch((error) => {
 			res.json({ ok: false, error: error.message });
+		});
+});
+
+router.get('/update-current-card-id', (req, res) => {
+	const { cardId } = req.query;
+	const userRef = db.collection('cardConfig').doc('currentCard');
+	userRef
+		.update({ cardId })
+		.then(() => {
+			res.json({
+				ok: true,
+				cardId,
+			});
+		})
+		.catch((error) => {
+			res.json({
+				ok: false,
+				cardId,
+			});
 		});
 });
 
