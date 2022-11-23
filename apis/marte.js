@@ -53,7 +53,7 @@ router.get('/check-card-id', (req, res) => {
 				const tableColor = tableId.split('_')[0];
 				const tableNum = tableId.split('_')[1];
 
-				if (parseInttimer === 0) {
+				if (parseInt(timer) === 0) {
 					updateUserInTableField(
 						user,
 						{ tableColor, tableNum },
