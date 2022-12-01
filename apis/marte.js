@@ -109,4 +109,23 @@ router.get('/update-current-card-id', (req, res) => {
 		});
 });
 
+router.post('/new-alert', (req, res) => {
+	const data = {
+		...req.body,
+		created: admin.firestore.Timestamp.now(),
+		deleted: false,
+	};
+	db.collection('alerts')
+		.add(data)
+		.then(() => {
+			res.json({ ok: true, ...data });
+		})
+		.catch((error) => {
+			res.json({
+				ok: false,
+				error,
+			});
+		});
+});
+
 module.exports = router;
